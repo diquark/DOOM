@@ -4,90 +4,99 @@
 #
 # $Log:$
 #
-CC=  gcc  # gcc or g++
+CC=  cc
 
-CFLAGS=-g -Wall -DNORMALUNIX -DLINUX # -DUSEASM 
-LDFLAGS=-L/usr/X11R6/lib
-LIBS=-lXext -lX11 -lnsl -lm
+CFLAGS=-5r -fp5 -fpi87 -Oartx -j -Wc,-ei
+LDFLAGS=-N1m
+LIBS=-lphoton
 
 # subdirectory for objects
-O=linux
+OBJ_DIR=obj/release
+
+# subdirectory for binary
+BIN_DIR=bin
 
 # not too sophisticated dependency
 OBJS=				\
-		$(O)/doomdef.o		\
-		$(O)/doomstat.o		\
-		$(O)/dstrings.o		\
-		$(O)/i_system.o		\
-		$(O)/i_sound.o		\
-		$(O)/i_video.o		\
-		$(O)/i_net.o			\
-		$(O)/tables.o			\
-		$(O)/f_finale.o		\
-		$(O)/f_wipe.o 		\
-		$(O)/d_main.o			\
-		$(O)/d_net.o			\
-		$(O)/d_items.o		\
-		$(O)/g_game.o			\
-		$(O)/m_menu.o			\
-		$(O)/m_misc.o			\
-		$(O)/m_argv.o  		\
-		$(O)/m_bbox.o			\
-		$(O)/m_fixed.o		\
-		$(O)/m_swap.o			\
-		$(O)/m_cheat.o		\
-		$(O)/m_random.o		\
-		$(O)/am_map.o			\
-		$(O)/p_ceilng.o		\
-		$(O)/p_doors.o		\
-		$(O)/p_enemy.o		\
-		$(O)/p_floor.o		\
-		$(O)/p_inter.o		\
-		$(O)/p_lights.o		\
-		$(O)/p_map.o			\
-		$(O)/p_maputl.o		\
-		$(O)/p_plats.o		\
-		$(O)/p_pspr.o			\
-		$(O)/p_setup.o		\
-		$(O)/p_sight.o		\
-		$(O)/p_spec.o			\
-		$(O)/p_switch.o		\
-		$(O)/p_mobj.o			\
-		$(O)/p_telept.o		\
-		$(O)/p_tick.o			\
-		$(O)/p_saveg.o		\
-		$(O)/p_user.o			\
-		$(O)/r_bsp.o			\
-		$(O)/r_data.o			\
-		$(O)/r_draw.o			\
-		$(O)/r_main.o			\
-		$(O)/r_plane.o		\
-		$(O)/r_segs.o			\
-		$(O)/r_sky.o			\
-		$(O)/r_things.o		\
-		$(O)/w_wad.o			\
-		$(O)/wi_stuff.o		\
-		$(O)/v_video.o		\
-		$(O)/st_lib.o			\
-		$(O)/st_stuff.o		\
-		$(O)/hu_stuff.o		\
-		$(O)/hu_lib.o			\
-		$(O)/s_sound.o		\
-		$(O)/z_zone.o			\
-		$(O)/info.o				\
-		$(O)/sounds.o
+		$(OBJ_DIR)/doomdef.o		\
+		$(OBJ_DIR)/doomstat.o		\
+		$(OBJ_DIR)/dstrings.o		\
+		$(OBJ_DIR)/i_main.o		\
+		$(OBJ_DIR)/i_system.o		\
+		$(OBJ_DIR)/i_sound.o		\
+		$(OBJ_DIR)/i_video.o		\
+		$(OBJ_DIR)/i_net.o			\
+		$(OBJ_DIR)/tables.o			\
+		$(OBJ_DIR)/f_finale.o		\
+		$(OBJ_DIR)/f_wipe.o 		\
+		$(OBJ_DIR)/d_main.o			\
+		$(OBJ_DIR)/d_net.o			\
+		$(OBJ_DIR)/d_items.o		\
+		$(OBJ_DIR)/g_game.o			\
+		$(OBJ_DIR)/m_menu.o			\
+		$(OBJ_DIR)/m_misc.o			\
+		$(OBJ_DIR)/m_argv.o  		\
+		$(OBJ_DIR)/m_bbox.o			\
+		$(OBJ_DIR)/m_fixed.o		\
+		$(OBJ_DIR)/m_swap.o			\
+		$(OBJ_DIR)/m_cheat.o		\
+		$(OBJ_DIR)/m_random.o		\
+		$(OBJ_DIR)/am_map.o			\
+		$(OBJ_DIR)/p_ceilng.o		\
+		$(OBJ_DIR)/p_doors.o		\
+		$(OBJ_DIR)/p_enemy.o		\
+		$(OBJ_DIR)/p_floor.o		\
+		$(OBJ_DIR)/p_inter.o		\
+		$(OBJ_DIR)/p_lights.o		\
+		$(OBJ_DIR)/p_map.o			\
+		$(OBJ_DIR)/p_maputl.o		\
+		$(OBJ_DIR)/p_plats.o		\
+		$(OBJ_DIR)/p_pspr.o			\
+		$(OBJ_DIR)/p_setup.o		\
+		$(OBJ_DIR)/p_sight.o		\
+		$(OBJ_DIR)/p_spec.o			\
+		$(OBJ_DIR)/p_switch.o		\
+		$(OBJ_DIR)/p_mobj.o			\
+		$(OBJ_DIR)/p_telept.o		\
+		$(OBJ_DIR)/p_tick.o			\
+		$(OBJ_DIR)/p_saveg.o		\
+		$(OBJ_DIR)/p_user.o			\
+		$(OBJ_DIR)/r_bsp.o			\
+		$(OBJ_DIR)/r_data.o			\
+		$(OBJ_DIR)/r_draw.o			\
+		$(OBJ_DIR)/r_main.o			\
+		$(OBJ_DIR)/r_plane.o		\
+		$(OBJ_DIR)/r_segs.o			\
+		$(OBJ_DIR)/r_sky.o			\
+		$(OBJ_DIR)/r_things.o		\
+		$(OBJ_DIR)/w_wad.o			\
+		$(OBJ_DIR)/wi_stuff.o		\
+		$(OBJ_DIR)/v_video.o		\
+		$(OBJ_DIR)/st_lib.o			\
+		$(OBJ_DIR)/st_stuff.o		\
+		$(OBJ_DIR)/hu_stuff.o		\
+		$(OBJ_DIR)/hu_lib.o			\
+		$(OBJ_DIR)/s_sound.o		\
+		$(OBJ_DIR)/z_zone.o			\
+		$(OBJ_DIR)/info.o				\
+		$(OBJ_DIR)/sounds.o
 
-all:	 $(O)/linuxxdoom
+all: $(BIN_DIR) $(OBJ_DIR) $(BIN_DIR)/phdoom
 
 clean:
-	rm -f *.o *~ *.flc
-	rm -f linux/*
+	rm -f $(OBJ_DIR)/*.o $(BIN_DIR)/phdoom
 
-$(O)/linuxxdoom:	$(OBJS) $(O)/i_main.o
-	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) $(O)/i_main.o \
-	-o $(O)/linuxxdoom $(LIBS)
+$(BIN_DIR)/phdoom: $(OBJS)
+	$(CC) $(LDFLAGS) $(OBJS) $(LIBS) -o $@
+	usemsg $@ ./use.msg
 
-$(O)/%.o:	%.c
+$(BIN_DIR):
+	mkdir -p $@
+
+$(OBJ_DIR):
+	mkdir -p $@
+
+$(OBJ_DIR)/%.o:	%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 #############################################################
