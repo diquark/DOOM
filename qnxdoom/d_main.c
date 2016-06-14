@@ -25,21 +25,17 @@
 //
 //-----------------------------------------------------------------------------
 
-
-static const char rcsid[] = "$Id: d_main.c,v 1.8 1997/02/03 22:45:09 b1 Exp $";
-
 #define	BGCOLOR		7
 #define	FGCOLOR		8
 
 
-#ifdef NORMALUNIX
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#endif
+#include <time.h>
 
 
 #include "doomdef.h"
@@ -131,6 +127,14 @@ void D_CheckNetGame (void);
 void D_ProcessEvents (void);
 void G_BuildTiccmd (ticcmd_t* cmd);
 void D_DoAdvanceDemo (void);
+
+static long ticksize = 2 * 1000000L;
+static long oldticksize;
+
+static void SetOldTickSize(void)
+{
+  qnx_ticksize(oldticksize, _TICKSIZE_STANDARD);
+}
 
 
 //
@@ -335,7 +339,7 @@ void D_Display (void)
 	{
 	    nowtime = I_GetTime ();
 	    tics = nowtime - wipestart;
-	} while (!tics);
+	} while (tics <= 0);
 	wipestart = nowtime;
 	done = wipe_ScreenWipe(wipe_Melt
 			       , 0, 0, SCREENWIDTH, SCREENHEIGHT, tics);
@@ -390,7 +394,7 @@ void D_DoomLoop (void)
 	    TryRunTics (); // will run at least one tic
 	}
 		
-	S_UpdateSounds (players[consoleplayer].mo);// move positional sounds
+  S_UpdateSounds (players[consoleplayer].mo);// move positional sounds
 
 	// Update display, next frame, with current state.
 	D_Display ();
@@ -573,7 +577,6 @@ void IdentifyVersion (void)
     char*	plutoniawad;
     char*	tntwad;
 
-#ifdef NORMALUNIX
     char *home;
     char *doomwaddir;
     doomwaddir = getenv("DOOMWADDIR");
@@ -613,7 +616,6 @@ void IdentifyVersion (void)
     if (!home)
       I_Error("Please set $HOME to your home directory");
     sprintf(basedefault, "%s/.doomrc", home);
-#endif
 
     if (M_CheckParm ("-shdev"))
     {
@@ -1123,7 +1125,17 @@ void D_DoomMain (void)
 	statcopy = (void*)atoi(myargv[p+1]);
 	printf ("External statistics registered.\n");
     }
-    
+
+    // set ticksize
+    p = M_CheckParm ("-ticksize");
+    if (p && p < myargc-1)
+      ticksize = atoi(myargv[p+1]) * 1000000L;
+    oldticksize = qnx_ticksize(ticksize, _TICKSIZE_STANDARD);
+    if (oldticksize == -1)
+      I_Error("Can't set system ticksize to %d ms", ticksize/1000000);
+    else
+      atexit(SetOldTickSize);
+
     // start the apropriate game based on parms
     p = M_CheckParm ("-record");
 

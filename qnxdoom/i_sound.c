@@ -22,9 +22,6 @@
 //
 //-----------------------------------------------------------------------------
 
-static const char
-rcsid[] = "$Id: i_unix.c,v 1.5 1997/02/03 22:45:10 b1 Exp $";
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -34,16 +31,12 @@ rcsid[] = "$Id: i_unix.c,v 1.5 1997/02/03 22:45:10 b1 Exp $";
 #include <sys/time.h>
 #include <sys/types.h>
 
-#ifndef LINUX
-#include <sys/filio.h>
-#endif
-
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
 
 // Linux voxware output.
-#include <linux/soundcard.h>
+//#include <linux/soundcard.h>
 
 // Timer stuff. Experimental.
 #include <time.h>
@@ -957,7 +950,7 @@ int I_SoundSetTimer( int duration_of_tick )
 #ifndef sun    
   //ac	t.sa_mask = _sig;
 #endif
-  act.sa_flags = SA_RESTART;
+  act.sa_flags = 0;
   
   sigaction( sig, &act, &oact );
 

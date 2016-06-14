@@ -21,10 +21,6 @@
 //
 //-----------------------------------------------------------------------------
 
-static const char
-rcsid[] = "$Id: m_bbox.c,v 1.1 1997/02/03 22:45:10 b1 Exp $";
-
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -46,7 +42,7 @@ rcsid[] = "$Id: m_bbox.c,v 1.1 1997/02/03 22:45:10 b1 Exp $";
 #endif
 #include "i_system.h"
 
-
+#include "m_argv.h"
 
 
 int	mb_used = 6;
@@ -84,20 +80,25 @@ byte* I_ZoneBase (int*	size)
 
 //
 // I_GetTime
-// returns time in 1/70th second tics
+// returns time in 1/35th second tics
 //
 int  I_GetTime (void)
 {
-    struct timeval	tp;
-    struct timezone	tzp;
-    int			newtics;
-    static int		basetime=0;
-  
-    gettimeofday(&tp, &tzp);
+    struct timespec tp;
+    static unsigned int basetime;
+    unsigned int ticks; // in ms
+#define timespec2ms(tsp) ((tsp).tv_sec * 1000 + (tsp).tv_nsec / 1000000)
+    
+    delay(1);
+    clock_gettime(CLOCK_REALTIME, &tp);
+    ticks = timespec2ms(tp);
+    
     if (!basetime)
-	basetime = tp.tv_sec;
-    newtics = (tp.tv_sec-basetime)*TICRATE + tp.tv_usec*TICRATE/1000000;
-    return newtics;
+      basetime = ticks;
+    
+    ticks -= basetime;
+
+    return (ticks * TICRATE)/1000;
 }
 
 
@@ -107,7 +108,7 @@ int  I_GetTime (void)
 //
 void I_Init (void)
 {
-    I_InitSound();
+  I_InitSound();
     //  I_InitGraphics();
 }
 
@@ -126,15 +127,7 @@ void I_Quit (void)
 
 void I_WaitVBL(int count)
 {
-#ifdef SGI
-    sginap(1);                                           
-#else
-#ifdef SUN
-    sleep(0);
-#else
-    usleep (count * (1000000/70) );                                
-#endif
-#endif
+    delay ((count * 1000)/70 );                                
 }
 
 void I_BeginRead(void)

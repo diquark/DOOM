@@ -21,10 +21,6 @@
 //
 //-----------------------------------------------------------------------------
 
-
-static const char
-rcsid[] = "$Id: g_game.c,v 1.8 1997/02/03 22:45:09 b1 Exp $";
-
 #include <string.h>
 #include <stdlib.h>
 
@@ -1214,7 +1210,7 @@ void G_DoLoadGame (void)
     // skip the description field 
     memset (vcheck,0,sizeof(vcheck)); 
     sprintf (vcheck,"version %i",VERSION); 
-    if (strcmp (save_p, vcheck)) 
+    if (strcmp ((char*)save_p, vcheck)) 
 	return;				// bad version 
     save_p += VERSIONSIZE; 
 			 
@@ -1590,8 +1586,8 @@ void G_DoPlayDemo (void)
     if ( *demo_p++ != VERSION)
     {
       fprintf( stderr, "Demo is from a different game version!\n");
-      gameaction = ga_nothing;
-      return;
+      //gameaction = ga_nothing;
+      //return;
     }
     
     skill = *demo_p++; 
@@ -1687,5 +1683,24 @@ boolean G_CheckDemoStatus (void)
     return false; 
 } 
  
- 
+void G_ReleaseAllButtonsKeys(void)
+{
+  int i;
+  event_t event;
+  
+  for (i = 0, event.type = ev_keyup; i < NUMKEYS; i++)
+    if (gamekeydown[i])
+    {
+      event.data1 = i;
+      D_PostEvent(&event);
+    }
+
+  if (mousebuttons[mousebfire] || mousebuttons[mousebstrafe] || 
+      mousebuttons[mousebforward])
+  {
+    event.type = ev_mouse;
+    event.data1 = event.data2 = event.data3 = 0;
+    D_PostEvent(&event);
+  }
+} 
  

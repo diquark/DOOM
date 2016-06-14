@@ -23,10 +23,6 @@
 //
 //-----------------------------------------------------------------------------
 
-
-static const char rcsid[] = "$Id: d_net.c,v 1.3 1997/02/03 22:01:47 b1 Exp $";
-
-
 #include "m_menu.h"
 #include "i_system.h"
 #include "i_video.h"
@@ -98,21 +94,7 @@ int NetbufferSize (void)
 //
 unsigned NetbufferChecksum (void)
 {
-    unsigned		c;
-    int		i,l;
-
-    c = 0x1234567;
-
-    // FIXME -endianess?
-#ifdef NORMALUNIX
     return 0;			// byte order problems
-#endif
-
-    l = (NetbufferSize () - (int)&(((doomdata_t *)0)->retransmitfrom))/4;
-    for (i=0 ; i<l ; i++)
-	c += ((unsigned *)&netbuffer->retransmitfrom)[i] * (i+1);
-
-    return c & NCMD_CHECKSUM;
 }
 
 //
@@ -530,7 +512,7 @@ void D_ArbitrateNetStart (void)
 #if 1
 	    for(i = 10 ; i  &&  HGetPacket(); --i)
 	    {
-		if((netbuffer->player&0x7f) < MAXNETNODES)
+		if ((netbuffer->player&0x7f) < MAXNETNODES)
 		    gotinfo[netbuffer->player&0x7f] = true;
 	    }
 #else
@@ -729,6 +711,7 @@ void TryRunTics (void)
 	if (I_GetTime ()/ticdup - entertic >= 20)
 	{
 	    M_Ticker ();
+      delay(1);
 	    return;
 	} 
     }

@@ -22,10 +22,6 @@
 //
 //-----------------------------------------------------------------------------
 
-
-static const char
-rcsid[] = "$Id: m_bbox.c,v 1.1 1997/02/03 22:45:10 b1 Exp $";
-
 #include "stdlib.h"
 
 #include "doomtype.h"
@@ -46,9 +42,19 @@ FixedMul
 ( fixed_t	a,
   fixed_t	b )
 {
-    return ((long long) a * (long long) b) >> FRACBITS;
+  // Watcom 10.6 does not support 64-bit integer types,
+  // so use in-line assembly instead
+#if __WATCOMC__ < 1100
+  fixed_t inline_asm(fixed_t a, fixed_t b);
+#pragma aux inline_asm = \
+  "imul edx"\
+  "shrd eax,edx,16"\
+  parm [eax] [edx] value [eax] modify [eax edx];
+  return(inline_asm(a, b));
+#else
+  return ((long long) a * (long long) b) >> FRACBITS;
+#endif
 }
-
 
 
 //

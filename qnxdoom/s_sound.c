@@ -21,12 +21,6 @@
 //
 //-----------------------------------------------------------------------------
 
-
-static const char
-rcsid[] = "$Id: s_sound.c,v 1.6 1997/02/03 22:45:12 b1 Exp $";
-
-
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -365,7 +359,7 @@ S_StartSoundAtVolume
   if (sfx->lumpnum < 0)
     sfx->lumpnum = I_GetSfxLumpNum(sfx);
 
-#ifndef SNDSRV
+#ifndef SNDSERV
   // cache data if necessary
   if (!sfx->data)
   {

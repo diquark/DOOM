@@ -24,6 +24,7 @@
 #ifndef __I_SYSTEM__
 #define __I_SYSTEM__
 
+#include <i86.h>
 #include "d_ticcmd.h"
 #include "d_event.h"
 

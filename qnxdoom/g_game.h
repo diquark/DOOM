@@ -71,6 +71,7 @@ boolean G_Responder (event_t*	ev);
 
 void G_ScreenShot (void);
 
+void G_ReleaseAllButtonsKeys(void);
 
 #endif
 //-----------------------------------------------------------------------------
