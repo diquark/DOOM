@@ -7,6 +7,7 @@ Options:
 -altdeath                 Enable alternate deathmatch mode
 -avg                      Same as -timer 20
 -config file              Use this config file instead of $HOME/.doomrc.
+-crc                      Calc CRC for each frame.
 -deathmatch               Set rules for a multiplayer deathmatch.
 -devparm                  Puts you in developers mode.
 -disp displayname         Attach to this Photon server.

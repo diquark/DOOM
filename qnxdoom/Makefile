@@ -8,7 +8,7 @@ CC=  cc
 
 CFLAGS=-5r -fp5 -fpi87 -Oartx -j -Wc,-ei
 LDFLAGS=-N1m
-LIBS=-lphoton
+LIBS=-lphoton_s -lphexlib
 
 # subdirectory for objects
 OBJ_DIR=obj/release

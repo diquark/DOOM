@@ -18,7 +18,7 @@
 // $Log:$
 //
 // DESCRIPTION:
-//	DOOM graphics stuff for X11, UNIX.
+//	DOOM graphics stuff for Photon, QNX.
 //
 //-----------------------------------------------------------------------------
 
@@ -47,7 +47,6 @@
 
 #include "doomdef.h"
 
-#define POINTER_WARP_COUNTDOWN	1
 
 #define PkIsRepeated( f ) ((f & Pk_KF_Key_Repeat) != 0)
 #define PkIsReleased( f ) ((f & (Pk_KF_Key_Down|Pk_KF_Key_Repeat)) == 0)
@@ -63,21 +62,10 @@ static boolean window_focused = false;
 static int	lastmousex;
 static int	lastmousey;
 static boolean novert = false;
+static boolean calc_crc = false;
 int		Ph_width;
 int		Ph_height;
 
-
-// MIT SHared Memory extension.
-boolean		doShm;
-
-//XShmSegmentInfo	X_shminfo;
-int		X_shmeventtype;
-
-// Fake mouse handling.
-// This cannot work properly w/o DGA.
-// Needs an invisible mouse cursor at least.
-boolean		grabMouse;
-int		doPointerWarp = POINTER_WARP_COUNTDOWN;
 
 // Blocky mode,
 // replace each 320x200 pixel with multiply*multiply pixels.
@@ -193,7 +181,6 @@ void I_StartFrame (void)
 }
 
 boolean		mousemoved = false;
-boolean		shmFinished;
 
 void I_GetEvent(void)
 {
@@ -297,8 +284,6 @@ void I_StartTic (void)
 
   if (!_Ph_)
     return;
-
-  //delay(10);
 
   while((ret = PhEventPeek(app->event, app->event_size)))
   {
@@ -446,10 +431,12 @@ void I_FinishUpdate (void)
     }
     break;
   }
-  //TODO: calculate image-data and pallete-data tags
+  
+  if(calc_crc)
+    image->image_tag = PxCRC(image->image, image->bpl * image->size.h);
+  
   PtDamageWidget(FrameLabel);
   PtFlush();
-  //PtSyncPhoton();
 }
 
 //
@@ -479,6 +466,9 @@ void UploadNewPalette(byte *palette)
     colors[i] = color;
 	}
   memcpy(image->palette, colors, 256 * sizeof(PgColor_t));
+  if(calc_crc)
+    image->palette_tag = PxCRC((char *)image->palette,
+                               image->colors * sizeof(PgColor_t));
 }
 
 
@@ -491,7 +481,6 @@ void I_SetPalette (byte* palette)
 }
 
 
-
 void I_InitGraphics(void)
 {
   static int firsttime=1;
@@ -499,7 +488,6 @@ void I_InitGraphics(void)
   int pnum;
   PhRid_t rid;
   PhRegion_t region;
-  
   PhChannelParms_t parms = {0, 0, Ph_DYNAMIC_BUFFER};
   PtArg_t arg[10];
   PhDim_t dim;
@@ -531,6 +519,10 @@ void I_InitGraphics(void)
   // check if the user wants to ignore mouse y-axis
   if (M_CheckParm("-novert"))
     novert = true;
+    
+  // check if CRC for image data and palette should be calculated
+  if (M_CheckParm("-crc"))
+    calc_crc = true;
 
   if (!PhAttach(displayname, &parms))
   {
@@ -577,6 +569,13 @@ void I_InitGraphics(void)
   image->palette = calloc(image->colors, sizeof(PgColor_t));
   if (!image->palette)
     I_Error("Could not allocate memory for image palette");
+    
+  if(calc_crc)
+  {
+    image->image_tag = PxCRC(image->image, image->bpl * image->size.h);
+    image->palette_tag = PxCRC((char *)image->palette,
+                               image->colors * sizeof(PgColor_t));
+  }
   
   PtSetArg(&arg[0], Pt_ARG_DIM, &dim, 0);
   PtSetArg(&arg[1], Pt_ARG_LABEL_TYPE, Pt_IMAGE, 0);
@@ -589,6 +588,7 @@ void I_InitGraphics(void)
   
   PtRealizeWidget(Window);
   
+  // Make Window region sensetive to mouse movements
   rid = PtWidgetRid(Window);
   PhRegionQuery(rid, &region, NULL, NULL, 0);
   region.events_sense |= Ph_EV_PTR_MOTION_BUTTON | Ph_EV_PTR_MOTION_NOBUTTON;
