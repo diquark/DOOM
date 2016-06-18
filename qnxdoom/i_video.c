@@ -26,6 +26,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
+#include <Ap.h>
 #include <Ph.h>
 #include <Pt.h>
 
@@ -52,7 +53,7 @@
 #define PkIsReleased( f ) ((f & (Pk_KF_Key_Down|Pk_KF_Key_Repeat)) == 0)
 
 static PtWidget_t *Window;
-static PtWidget_t *FrameLabel;
+static PtWidget_t *Frame;
 
 extern struct _Ph_ctrl *_Ph_;
 static PtAppContext_t app;
@@ -66,6 +67,8 @@ static boolean calc_crc = false;
 int		Ph_width;
 int		Ph_height;
 
+//Aplib requires to define ab_exe_path here
+char ab_exe_path[PATH_MAX];
 
 // Blocky mode,
 // replace each 320x200 pixel with multiply*multiply pixels.
@@ -435,7 +438,7 @@ void I_FinishUpdate (void)
   if(calc_crc)
     image->image_tag = PxCRC(image->image, image->bpl * image->size.h);
   
-  PtDamageWidget(FrameLabel);
+  PtDamageWidget(Frame);
   PtFlush();
 }
 
@@ -480,6 +483,22 @@ void I_SetPalette (byte* palette)
     UploadNewPalette(palette);
 }
 
+static PtWidget_t* LoadIcon(void)
+{
+  ApDBase_t *dbase;
+  PtWidget_t *icon  = NULL;
+  
+  dbase = ApOpenExecDBaseFile(myargv[0], "Icon.wgti");
+  if (dbase)
+  {
+    ApAddClass("PtIcon", &PtIcon);
+    ApAddClass("PtLabel", &PtLabel);
+    icon = ApCreateWidgetFamily(dbase, "Icon", 0, 0, 0, NULL);
+    // Don't close dbase: there are few PhImage_t data attached to widgets
+    //ApCloseDBase(dbase);
+  }
+  return icon;
+}
 
 void I_InitGraphics(void)
 {
@@ -491,6 +510,7 @@ void I_InitGraphics(void)
   PhChannelParms_t parms = {0, 0, Ph_DYNAMIC_BUFFER};
   PtArg_t arg[10];
   PhDim_t dim;
+  PtWidget_t *Icon;
 
   if (!firsttime)
     return; 
@@ -534,6 +554,9 @@ void I_InitGraphics(void)
       I_Error("Could not attach to Photon manager [/dev/photon]");
   }
   
+  PtInit(NULL);
+  Icon = LoadIcon();
+  
   PtSetArg(&arg[0], Pt_ARG_WINDOW_TITLE, "PhDoom", 0);
   PtSetArg(&arg[1], Pt_ARG_DIM, &dim, 0);
   PtSetArg(&arg[2], Pt_ARG_WINDOW_RENDER_FLAGS,
@@ -550,8 +573,11 @@ void I_InitGraphics(void)
   PtSetArg(&arg[6], Pt_ARG_MAX_HEIGHT, dim.h, 0);
   PtSetArg(&arg[7], Pt_ARG_MAX_WIDTH,  dim.w, 0);
   PtSetArg(&arg[8], Pt_ARG_CURSOR_TYPE, Ph_CURSOR_NONE, 0);
+  PtSetArg(&arg[9], Pt_ARG_ICON_WINDOW, Icon, 0);
 
-  Window = PtAppInit(NULL, NULL, NULL, 9, arg);
+  PtSetParentWidget(NULL);
+  Window = PtCreateWidget(PtWindow, NULL, 10, arg);
+  PtReParentWidget(Icon, Window);
   
   image = calloc(1, sizeof(*image));
   if (!image)
@@ -584,7 +610,7 @@ void I_InitGraphics(void)
   PtSetArg(&arg[4], Pt_ARG_MARGIN_WIDTH, 0, 0);
   PtSetArg(&arg[5], Pt_ARG_BORDER_WIDTH, 0, 0);
   
-  FrameLabel = PtCreateWidget(PtLabel, Window, 6, arg);
+  Frame = PtCreateWidget(PtLabel, Window, 6, arg);
   
   PtRealizeWidget(Window);
   

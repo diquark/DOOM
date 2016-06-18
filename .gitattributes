@@ -1,0 +1,6 @@
+#sources
+*.c text eol=lf
+*.h text eol=lf
+
+# Widget database files
+*.wgti binary

@@ -8,7 +8,7 @@ CC=  cc
 
 CFLAGS=-5r -fp5 -fpi87 -Oartx -j -Wc,-ei
 LDFLAGS=-N1m
-LIBS=-lphoton_s -lphexlib
+LIBS=-lphoton_s -lphexlib -lAplib
 
 # subdirectory for objects
 OBJ_DIR=obj/release
@@ -88,7 +88,8 @@ clean:
 
 $(BIN_DIR)/phdoom: $(OBJS)
 	$(CC) $(LDFLAGS) $(OBJS) $(LIBS) -o $@
-	usemsg $@ ./use.msg
+	usemsg $@ use.msg
+	bindres $@ Icon.wgti
 
 $(BIN_DIR):
 	mkdir -p $@
