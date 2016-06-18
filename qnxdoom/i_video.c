@@ -48,6 +48,11 @@
 
 #include "doomdef.h"
 
+#if (defined(LABEL_WIDGET) && defined(RAW_WIDGET))
+#  error Both LABEL_WIDGET and RAW_WIDGET macros are defined
+#elif (!defined(LABEL_WIDGET) && !defined(RAW_WIDGET))
+#  error Neither LABEL_WIDGET nor RAW_WIDGET macros are defined
+#endif
 
 #define PkIsRepeated( f ) ((f & Pk_KF_Key_Repeat) != 0)
 #define PkIsReleased( f ) ((f & (Pk_KF_Key_Down|Pk_KF_Key_Repeat)) == 0)
@@ -500,6 +505,15 @@ static PtWidget_t* LoadIcon(void)
   return icon;
 }
 
+#ifdef RAW_WIDGET
+static void DrawFrame(PtWidget_t *widget, PhTile_t *damage)
+{
+  PhPoint_t pos = {0, 0};
+  
+  PgDrawPhImagemx(&pos, image, 0);
+}
+#endif
+
 void I_InitGraphics(void)
 {
   static int firsttime=1;
@@ -603,6 +617,7 @@ void I_InitGraphics(void)
                                image->colors * sizeof(PgColor_t));
   }
   
+#ifdef LABEL_WIDGET
   PtSetArg(&arg[0], Pt_ARG_DIM, &dim, 0);
   PtSetArg(&arg[1], Pt_ARG_LABEL_TYPE, Pt_IMAGE, 0);
   PtSetArg(&arg[2], Pt_ARG_LABEL_DATA, image, sizeof(*image));
@@ -611,6 +626,14 @@ void I_InitGraphics(void)
   PtSetArg(&arg[5], Pt_ARG_BORDER_WIDTH, 0, 0);
   
   Frame = PtCreateWidget(PtLabel, Window, 6, arg);
+#endif
+
+#ifdef RAW_WIDGET
+  PtSetArg(&arg[0], Pt_ARG_DIM, &dim, 0);
+  PtSetArg(&arg[1], Pt_ARG_RAW_DRAW_F, DrawFrame, 0);
+  
+  Frame = PtCreateWidget(PtRaw, Window, 2, arg);
+#endif
   
   PtRealizeWidget(Window);
   

@@ -6,7 +6,7 @@
 #
 CC=  cc
 
-CFLAGS=-5r -fp5 -fpi87 -Oartx -j -Wc,-ei
+CFLAGS=-5r -fp5 -fpi87 -Oartx -j -Wc,-ei -DRAW_WIDGET
 LDFLAGS=-N1m
 LIBS=-lphoton_s -lphexlib -lAplib
 
