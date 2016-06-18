@@ -1130,9 +1130,12 @@ void D_DoomMain (void)
     p = M_CheckParm ("-ticksize");
     if (p && p < myargc-1)
       ticksize = atoi(myargv[p+1]) * 1000000L;
+
     oldticksize = qnx_ticksize(ticksize, _TICKSIZE_STANDARD);
+
     if (oldticksize == -1)
-      I_Error("Can't set system ticksize to %d ms", ticksize/1000000);
+      fprintf(stderr, "Can't set system ticksize to %d ms: %s\n",
+              ticksize/1000000, strerror(errno));
     else
       atexit(SetOldTickSize);
 
