@@ -230,6 +230,9 @@ void I_GetEvent(void)
         D_PostEvent(&event);
       }
       break;
+    case Ph_EV_BOUNDARY:
+      if (app->event->subtype != Ph_EV_PTR_LEAVE)
+        break;
     case Ph_EV_PTR_MOTION_BUTTON:
     case Ph_EV_PTR_MOTION_NOBUTTON:
       if (window_focused)
