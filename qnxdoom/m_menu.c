@@ -518,7 +518,8 @@ void M_ReadSaveStrings(void)
 	if (M_CheckParm("-cdrom"))
 	    sprintf(name,"c:\\doomdata\\"SAVEGAMENAME"%d.dsg",i);
 	else
-	    sprintf(name,SAVEGAMENAME"%d.dsg",i);
+	    sprintf(name, "%s/%s/%s%d.dsg", getenv("HOME"),
+                    SAVEGAMESUBDIR, SAVEGAMENAME, i);
 
 	handle = open (name, O_RDONLY | 0, 0666);
 	if (handle == -1)
@@ -576,12 +577,13 @@ void M_DrawSaveLoadBorder(int x,int y)
 //
 void M_LoadSelect(int choice)
 {
-    char    name[256];
+    char    name[PATH_MAX];
 	
     if (M_CheckParm("-cdrom"))
 	sprintf(name,"c:\\doomdata\\"SAVEGAMENAME"%d.dsg",choice);
     else
-	sprintf(name,SAVEGAMENAME"%d.dsg",choice);
+	sprintf(name, "%s/%s/%s%d.dsg", getenv("HOME"),
+                SAVEGAMESUBDIR, SAVEGAMENAME, choice);
     G_LoadGame (name);
     M_ClearMenus ();
 }

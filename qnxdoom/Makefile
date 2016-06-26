@@ -6,7 +6,7 @@
 #
 CC=  cc
 
-CFLAGS=-5r -fp5 -fpi87 -Oartx -j -Wc,-ei -DRAW_WIDGET
+CFLAGS=-5r -fp5 -fpi87 -Ortx -j -Wc,-ei -DRAW_WIDGET
 LDFLAGS=-N1m
 LIBS=-lphoton_s -lphexlib -lAplib
 
@@ -82,6 +82,11 @@ OBJS=				\
 		$(OBJ_DIR)/sounds.o
 
 all: $(BIN_DIR) $(OBJ_DIR) $(BIN_DIR)/phdoom
+
+install: $(BIN_DIR)/phdoom
+	cp $< /usr/bin/photon
+	mkdir -p /usr/local/share/doom
+	mkdir -p $(HOME)/.photon/phdoom
 
 clean:
 	rm -f $(OBJ_DIR)/*.o $(BIN_DIR)/phdoom

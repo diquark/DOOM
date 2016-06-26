@@ -271,9 +271,7 @@ void I_GetEvent(void)
           //Window get focus
           ChangeCursorAppearance(cursor_hide);
         }
-        
       }
-         
       break;
   }
   PtEventHandler(app->event);

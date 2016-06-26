@@ -39,7 +39,8 @@
 #endif
 
 // Misc. other strings.
-#define SAVEGAMENAME	"doomsav"
+#define SAVEGAMENAME	 "doomsav"
+#define SAVEGAMESUBDIR ".photon/phdoom"
 
 
 //

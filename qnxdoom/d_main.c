@@ -581,7 +581,10 @@ void IdentifyVersion (void)
     char *doomwaddir;
     doomwaddir = getenv("DOOMWADDIR");
     if (!doomwaddir)
-	doomwaddir = ".";
+  doomwaddir = "/usr/local/share/doom";
+  
+    if (access(doomwaddir, R_OK | X_OK) == -1)
+  doomwaddir = ".";
 
     // Commercial.
     doom2wad = malloc(strlen(doomwaddir)+1+9+1);
@@ -615,7 +618,7 @@ void IdentifyVersion (void)
     home = getenv("HOME");
     if (!home)
       I_Error("Please set $HOME to your home directory");
-    sprintf(basedefault, "%s/.doomrc", home);
+    sprintf(basedefault, "%s/.photon/phdoom/.doomrc", home);
 
     if (M_CheckParm ("-shdev"))
     {
@@ -799,7 +802,7 @@ void FindResponseFile (void)
 void D_DoomMain (void)
 {
     int             p;
-    char                    file[256];
+    char                    file[PATH_MAX];
 
     FindResponseFile ();
 	
@@ -1169,7 +1172,8 @@ void D_DoomMain (void)
 	if (M_CheckParm("-cdrom"))
 	    sprintf(file, "c:\\doomdata\\"SAVEGAMENAME"%c.dsg",myargv[p+1][0]);
 	else
-	    sprintf(file, SAVEGAMENAME"%c.dsg",myargv[p+1][0]);
+	    sprintf(file, "%s/%s/%s%c.dsg",
+              getenv("HOME"), SAVEGAMESUBDIR, SAVEGAMENAME, myargv[p+1][0]);
 	G_LoadGame (file);
     }
 	
