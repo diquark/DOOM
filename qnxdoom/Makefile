@@ -87,6 +87,7 @@ install: $(BIN_DIR)/phdoom
 	cp $< /usr/bin/photon
 	mkdir -p /usr/local/share/doom
 	mkdir -p $(HOME)/.photon/phdoom
+	cp ./config/.doomrc $(HOME)/.photon/phdoom
 
 clean:
 	rm -f $(OBJ_DIR)/*.o $(BIN_DIR)/phdoom
